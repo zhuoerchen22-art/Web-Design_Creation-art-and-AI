@@ -1,0 +1,140 @@
+/* ---------------------------------
+   CSS 颜色与基础布局 
+   --------------------------------- */
+:root {
+  /* **初始背景：深靛蓝调整为深青绿色渐变 (新增绿调)** */
+  --initial-bg: linear-gradient(to top right, #153A35, #254D48); 
+  /* **分裂背景：柔和的米色到浅卡其渐变 (不变)** */
+  --split-bg: linear-gradient(to right, #F0EAD6, #EBDCB2); 
+  
+  /* **米色按钮颜色/悬停背景色 (用于悬停时方框的颜色)** */
+  --button-color: #F0EAD6; 
+
+  --initial-text: #EBEBEB; /* 封面文字：浅冷灰 */
+  --split-text: #1A1A1A; /* 分裂后文字/深灰色 (用于米色背景上的文本) */
+  --panel-color: rgba(0, 109, 91, 0.9); /* 深蓝绿面板色 (不变) */
+}
+
+/* ---------------------------------
+   基础 CSS 样式
+   --------------------------------- */
+html, body {
+  margin: 0; padding: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--initial-bg); 
+  transition: background 1s ease, filter 1s ease;
+}
+#container {
+  position: relative;
+  width: 100vw; height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+}
+#textWrapper {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 1s ease;
+  z-index: 2;
+}
+.left-text, .right-text {
+  font-size: 96px; font-weight: 800;
+  position: absolute; top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  transition: opacity 0.5s ease, transform 1s cubic-bezier(0.4,0,0.2,1);
+}
+.left-text { 
+    right: calc(50% + 150px);
+    color: var(--initial-text); 
+}
+.right-text { 
+    left: calc(50% + 150px); 
+    color: var(--initial-text); 
+}
+
+#buttonPart {
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  width: 140px; height: 140px;
+  border: none; outline: none; 
+  background: transparent; /* 默认背景透明 */
+  border-radius: 8px; /* 问号容器保持圆角 */
+  position: relative; z-index: 3;
+  /* 增加背景过渡 */
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 悬停效果：放大到 1.2，背景变为米色，问号颜色变为深色 */
+#buttonPart:hover { 
+    transform: scale(1.2); 
+    background: var(--button-color); /* 悬停时背景变为米色方框 */
+    box-shadow: none; 
+} 
+#buttonPart:active { transform: scale(0.95); }
+
+/* 初始状态问号颜色 (白色) */
+#buttonPart .eq { 
+    color: #FFFFFF; /* 问号默认颜色改为白色 */
+    font-size: 140px; 
+    font-weight: 800; 
+    transition: color 0.3s ease; 
+}
+
+/* 悬停时问号颜色 (改为深色以保证对比度) */
+#buttonPart:hover .eq {
+    color: var(--split-text); /* 深灰色 */
+}
+
+.panel {
+  position: absolute; width: 50%; height: 50%;
+  background: transparent;
+  transition: transform 1.2s cubic-bezier(0.645,0.045,0.355,1), opacity 1s ease;
+  z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 700; 
+  color: #FFFFFF; 
+  text-align: center; padding: 10px; opacity: 0;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 10px; /* 四个分裂面板为圆角 */
+}
+
+.panel-content {
+  display: none; overflow-y: auto; max-height: 100%; width: 90%;
+  margin-top: 10px; padding-right: 10px; 
+  padding-bottom: 50px; /* <--- 增加这一行：底部填充 50px */
+  text-align: left;
+  font-weight: 400; font-size: 18px;
+}
+/* 滚动条美化 */
+.panel-content::-webkit-scrollbar { width: 8px; }
+.panel-content::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.4); border-radius: 4px; }
+.panel-content::-webkit-scrollbar-track { background-color: rgba(255,255,255,0.05); }
+
+/* 右上角三角形关闭按钮 */
+.close-btn {
+  display: none; position: absolute; top: 15px; right: 20px;
+  width: 0; height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 25px solid var(--split-text); 
+  cursor: pointer; z-index: 20;
+  transition: transform .25s ease;
+}
+.close-btn:hover { transform: scale(1.2); }
+
+.panel.top-left { top: 0; left: 0; transform-origin: right bottom; }
+.panel.top-right { top: 0; left: 50%; transform-origin: left bottom; }
+.panel.bottom-left { top: 50%; left: 0; transform-origin: right top; }
+.panel.bottom-right { top: 50%; left: 50%; transform-origin: left top; }
+
+@media(max-width:768px){
+  .left-text, .right-text{ font-size:60px; }
+  .left-text { right: calc(50% + 50px); } 
+  .right-text { left: calc(50% + 50px); } 
+  #buttonPart .eq{ font-size:80px; }
+  .panel{ font-size:18px; }
+  .panel-content img { max-width: 100%; height: auto; } 
+}
